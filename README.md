@@ -23,13 +23,13 @@ See the few examples below.
 **Get Shell**
 
 ```shell
-echo '{{ split .SHELL "/" | last }}' | go run main.go
+echo '{{ split .SHELL "/" | last }}' | gotmpl
 ```
 
 **Clean Path**
 
 ```shell
-echo '{{ .PATH | split ":" | set | array | sort | join ":" }}' | go run main.go
+echo '{{ .PATH | split ":" | set | array | sort | join ":" }}' | gotmpl
 ```
 
 # Contributing
