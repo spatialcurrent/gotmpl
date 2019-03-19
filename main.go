@@ -16,7 +16,12 @@ import (
 )
 
 import (
+	"github.com/pkg/errors"
+)
+
+import (
 	"github.com/spatialcurrent/go-adaptive-functions/af"
+	"github.com/spatialcurrent/go-simple-serializer/gss"
 )
 
 func main() {
@@ -43,7 +48,33 @@ func main() {
 		ctx[parts[0]] = parts[1]
 	}
 
-	funcs := map[string]interface{}{}
+	funcs := map[string]interface{}{
+		"parse": func(args ...interface{}) (interface{}, error) {
+			if len(args) != 2 {
+				return nil, errors.New("invalid arguments for parse " + fmt.Sprint(args))
+			}
+			if text, ok := args[1].(string); ok {
+				if f, ok := args[0].(string); ok {
+					t, err := gss.GetType([]byte(text), f)
+					if err != nil {
+						return "", errors.Wrap(err, "error creating new object for format "+f)
+					}
+					return gss.DeserializeString(
+						text,
+						f,
+						gss.NoHeader,
+						gss.NoComment,
+						true,
+						0,
+						gss.NoLimit,
+						t,
+						false,
+						false)
+				}
+			}
+			return nil, errors.New("invalid arguments for parse " + fmt.Sprint(args))
+		},
+	}
 	for _, f := range af.Functions {
 		f := f
 		for _, alias := range f.Aliases {

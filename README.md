@@ -4,7 +4,7 @@
 
 # Description
 
-**gotmpl** is a super simple command line program for rendering templates.  **gotmpl** uses environment variables as its context and [go-adaptive-functions](https://github.com/spatialcurrent/go-adaptive-functions) for its functions.
+**gotmpl** is a super simple command line program for rendering templates.  **gotmpl** uses environment variables as its context and [go-adaptive-functions](https://github.com/spatialcurrent/go-adaptive-functions) for its functions.  **gotmpl** uses [go-simple-serializer](https://github.com/spatialcurrent/go-simple-serializer) for parsing text into data, such as in the "Render Time Table" example below.
 
 # Installation
 
@@ -30,6 +30,12 @@ echo '{{ split .SHELL "/" | last }}' | gotmpl
 
 ```shell
 echo '{{ .PATH | split ":" | set | array | sort | join ":" }}' | gotmpl
+```
+
+**Render Time Table**
+
+```shell
+echo '{{ with $items := .data | parse "csv" }}<table style="text-align:left;font-size:16px;"><tr><th>Time</th><th>Title</th>{{ range $items }}<tr><td>{{ .Time }}</td><td>{{ .Title }}</td></tr>{{ end }}</table>{{ end }}' | data=$(cat timetable.csv) gotmpl
 ```
 
 # Contributing
