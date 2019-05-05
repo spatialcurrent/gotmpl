@@ -10,7 +10,7 @@
 
 No installation is required.  Just grab a [release](https://github.com/spatialcurrent/gotmpl/releases).  You might want to rename your binary to just `gotmpl` for convenience.
 
-If you do have go already installed, you can just run using `go run main.go` or install with `bash scripts/install.sh`
+If you do have go already installed, you can just run using `go run main.go` or install with `make install`
 
 # Usage
 
@@ -37,6 +37,10 @@ echo '{{ .PATH | split ":" | set | array | sort | join ":" }}' | gotmpl
 ```shell
 echo '{{ with $items := .data | parse "csv" }}<table style="text-align:left;font-size:16px;"><tr><th>Time</th><th>Title</th>{{ range $items }}<tr><td>{{ .Time }}</td><td>{{ .Title }}</td></tr>{{ end }}</table>{{ end }}' | data=$(cat timetable.csv) gotmpl
 ```
+
+# Testing
+
+Run tests with `make test` (or `bash scripts/test.sh`), which runs unit tests, `go vet`, `go vet with shadow`, [errcheck](https://github.com/kisielk/errcheck), [ineffassign](https://github.com/gordonklaus/ineffassign), [staticcheck](https://staticcheck.io/), and [misspell](https://github.com/client9/misspell).
 
 # Contributing
 

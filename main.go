@@ -17,6 +17,7 @@ import (
 
 import (
 	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 )
 
 import (
@@ -24,30 +25,7 @@ import (
 	"github.com/spatialcurrent/go-simple-serializer/gss"
 )
 
-func main() {
-
-	fi, err := os.Stdin.Stat()
-	if err != nil {
-		panic(err)
-	}
-
-	if fi.Mode()&os.ModeNamedPipe == 0 && !fi.Mode().IsRegular() {
-		fmt.Println("Usage: TEMPLATE_TEXT | gotmpl")
-		fmt.Println("Usage: gotmpl < TEMPLATE_FILE")
-		return
-	}
-
-	text, err := ioutil.ReadAll(os.Stdin)
-	if err != nil {
-		panic(err)
-	}
-
-	ctx := map[string]string{}
-	for _, str := range os.Environ() {
-		parts := strings.SplitN(str, "=", 2)
-		ctx[parts[0]] = parts[1]
-	}
-
+func initFunctions() map[string]interface{} {
 	funcs := map[string]interface{}{
 		"parse": func(args ...interface{}) (interface{}, error) {
 			if len(args) != 2 {
@@ -75,6 +53,7 @@ func main() {
 			return nil, errors.New("invalid arguments for parse " + fmt.Sprint(args))
 		},
 	}
+
 	for _, f := range af.Functions {
 		f := f
 		for _, alias := range f.Aliases {
@@ -88,13 +67,60 @@ func main() {
 		}
 	}
 
-	tmpl, err := template.New("main").Funcs(funcs).Parse(string(text))
-	if err != nil {
-		panic(err)
+	return funcs
+}
+
+func main() {
+	cmd := &cobra.Command{
+		Use:                   "gotmpl [k=v]... < template_file",
+		DisableFlagsInUseLine: true,
+		Short:                 "gotmpl",
+		Long:                  `gotmpl is a super simple command line program for rendering templates that uses environment variables and command line arguments as its context variables.  The template is read from stdin.`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+
+			fi, err := os.Stdin.Stat()
+			if err != nil {
+				return err
+			}
+
+			if fi.Mode()&os.ModeNamedPipe == 0 && !fi.Mode().IsRegular() {
+				return cmd.Usage()
+			}
+
+			text, err := ioutil.ReadAll(os.Stdin)
+			if err != nil {
+				return err
+			}
+
+			ctx := map[string]string{}
+
+			// load context from environment variables
+			for _, str := range os.Environ() {
+				parts := strings.SplitN(str, "=", 2)
+				ctx[parts[0]] = parts[1]
+			}
+
+			// load context from command line arguments
+			for _, str := range args {
+				parts := strings.SplitN(str, "=", 2)
+				ctx[parts[0]] = parts[1]
+			}
+
+			tmpl, err := template.New("main").Funcs(initFunctions()).Parse(string(text))
+			if err != nil {
+				return err
+			}
+
+			err = tmpl.Execute(os.Stdout, ctx)
+			if err != nil {
+				return err
+			}
+
+			return nil
+		},
 	}
 
-	err = tmpl.Execute(os.Stdout, ctx)
-	if err != nil {
+	if err := cmd.Execute(); err != nil {
 		panic(err)
 	}
 }
