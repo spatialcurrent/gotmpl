@@ -4,7 +4,7 @@
   "description": "Simple library and command line program for rendering templates.",
   "main": "bin/gotmpl.js",
   "scripts": {
-    "lint": "eslint js",
+    "lint": "./node_modules/eslint/bin/eslint.js ./js",
     "clean": "rm -fr dist/gotmpl.mod.min.js",
     "build": "make dist/gotmpl.mod.min.js",
     "test": "./node_modules/.bin/jest",
@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/spatialcurrent/gotmpl#readme",
   "devDependencies": {
+    "eslint": "^5.6.1",
     "jest": "^23.6.0",
     "jest-cli": "^23.6.0"
   },

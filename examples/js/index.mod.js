@@ -1,3 +1,10 @@
+// =================================================================
+//
+// Copyright (C) 2019 Spatial Current, Inc. - All Rights Reserved
+// Released as open source under the MIT License.  See LICENSE file.
+//
+// =================================================================
+
 const { render } = require('./../../dist/gotmpl.mod.min.js');
 
 const tmpl = "Sum: {{ .values | sum }}\nMax: {{ .values | max }}\nValues: {{ .values | join \", \" }}"
