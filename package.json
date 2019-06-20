@@ -1,0 +1,39 @@
+{
+  "name": "gotmpl",
+  "version": "0.0.1",
+  "description": "Simple library and command line program for rendering templates.",
+  "main": "bin/gotmpl.js",
+  "scripts": {
+    "lint": "eslint js",
+    "clean": "rm -fr dist/gotmpl.mod.min.js",
+    "build": "make dist/gotmpl.mod.min.js",
+    "test": "./node_modules/.bin/jest",
+    "test:clean": "npm run clean && npm run build && npm run test"
+  },
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spatialcurrent/gotmpl.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/spatialcurrent/gotmpl/issues"
+  },
+  "homepage": "https://github.com/spatialcurrent/gotmpl#readme",
+  "devDependencies": {
+    "jest": "^23.6.0",
+    "jest-cli": "^23.6.0"
+  },
+  "dependencies": {},
+  "jest": {
+    "roots": [
+      "js"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "json"
+    ],
+    "testEnvironment": "./testEnvironment"
+  }
+}
